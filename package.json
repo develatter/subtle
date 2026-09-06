@@ -1,0 +1,41 @@
+{
+  "name": "subtle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "tauri": "tauri",
+    "desktop": "node scripts/desktop.mjs",
+    "format": "prettier --write src tests scripts *.json *.ts *.html *.md src-tauri/*.json src-tauri/capabilities/*.json",
+    "predev": "node scripts/prepare-renderer.mjs",
+    "prebuild": "node scripts/prepare-renderer.mjs",
+    "release:mac": "python3 scripts/prepare-runtime.py && node scripts/desktop.mjs build --config src-tauri/tauri.release.conf.json --bundles app",
+    "check:export": "node --import tsx scripts/check-export.mjs",
+    "test:ui": "node tests/ui/smoke.mjs"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans": "^5.3.0",
+    "@tauri-apps/api": "^2.0.0",
+    "libass-wasm": "^4.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "lucide-react": "^1.41.0",
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.19.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "license": "UNLICENSED"
+}

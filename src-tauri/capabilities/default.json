@@ -1,0 +1,11 @@
+{
+  "identifier": "default",
+  "description": "Local editor window and explicit file dialogs",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "core:window:allow-destroy"
+  ]
+}

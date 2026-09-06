@@ -1,0 +1,135 @@
+/* Style inspector. */
+.inspector {
+  width: 270px;
+  flex: none;
+  background: #191a1e;
+  border-left: 1px solid #292a2e;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #414149 transparent;
+}
+.inspector > .panel-title {
+  border-bottom: 1px solid #292a2e;
+}
+.scope {
+  margin: 17px 16px 12px;
+  border: 1px solid #383140;
+  background: #28232e;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  color: #c4addc;
+}
+.scope strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+}
+.scope small {
+  display: block;
+  font-size: 9px;
+  color: #92849d;
+  margin-top: 5px;
+}
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #a5a4ad;
+  padding: 0 16px 15px;
+}
+.settings-section {
+  padding: 17px 18px;
+  border-top: 1px solid #292a2e;
+}
+.settings-section h3 {
+  margin-bottom: 15px;
+}
+.settings-section label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #aaa9b2;
+  font-size: 10px;
+}
+.settings-section select {
+  width: 100%;
+  margin-bottom: 13px;
+  color: #e0dde8;
+}
+.field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 12px;
+}
+.color-input {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  gap: 6px;
+  border: 1px solid #333438;
+  border-radius: 6px;
+  background: #222327;
+  padding: 6px;
+  font-size: 10px;
+}
+.color-input input {
+  padding: 0;
+  border: 0;
+  width: 18px;
+  height: 20px;
+}
+.slider-field {
+  margin-top: 16px;
+}
+.slider-field > span {
+  display: flex;
+  justify-content: space-between;
+}
+.slider-field output {
+  color: #dbd6e4;
+  font-variant-numeric: tabular-nums;
+}
+.slider-field input {
+  width: 100%;
+  margin-top: 5px;
+}
+.animations {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+.animations button {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 3px 8px;
+  font-size: 9px;
+  border: 1px solid #36363d;
+  color: #8e8c9c;
+  gap: 9px;
+}
+.animations button > span {
+  font-size: 20px;
+  font-weight: 650;
+  color: #c4c0ce;
+  height: 26px;
+}
+.animations button.chosen {
+  border-color: #aa91d4;
+  color: #d4baff;
+  background: #bd94ff10;
+}
+.animations button.chosen > span {
+  color: #d5baff;
+}
+.help {
+  font-size: 10px;
+  color: #83838f;
+  line-height: 1.65;
+}
+.settings-section .help {
+  margin-top: 12px;
+}

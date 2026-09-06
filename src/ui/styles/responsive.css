@@ -1,0 +1,24 @@
+/* Narrow windows and reduced motion. Loaded last so it overrides the base rules. */
+@media (max-width: 1200px) {
+  .transcript {
+    width: 280px;
+  }
+  .inspector {
+    width: 245px;
+  }
+  .save-state {
+    display: none;
+  }
+  .rail {
+    width: 65px;
+  }
+  .preview-area {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}

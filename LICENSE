@@ -1,0 +1,11 @@
+Copyright (c) 2026 Alejandro López Martínez. Todos los derechos reservados.
+
+Este software y su código fuente son propietarios. No se concede ninguna
+licencia de uso, copia, modificación, distribución ni obra derivada, salvo
+autorización expresa y por escrito del titular.
+
+El paquete distribuible incluye componentes de terceros con sus propias
+licencias (entre ellos FFmpeg y bibliotecas asociadas bajo GPL/LGPL, ejecutados
+como procesos independientes; Whisper y stable-ts bajo MIT; Noto Sans bajo
+OFL). Sus textos y avisos se incluyen en el paquete en `runtime/media/licenses`
+y `runtime/python-licenses`, y no quedan afectados por este aviso.

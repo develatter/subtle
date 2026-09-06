@@ -1,0 +1,29 @@
+name: Editor and native checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev ffmpeg fonts-dejavu-core
+      - run: rustup toolchain install stable --profile minimal
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      - run: cargo +stable test --locked --manifest-path src-tauri/Cargo.toml
+      - run: python3 scripts/check-speech.py
+      - run: npm run check:export
+      - name: Compile desktop executable
+        run: cargo +stable build --locked --manifest-path src-tauri/Cargo.toml

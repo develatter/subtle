@@ -1,0 +1,16 @@
+node_modules/
+dist/
+src-tauri/target/
+.DS_Store
+*.tsbuildinfo
+.venv/
+
+.models/
+__pycache__/
+public/libass/
+
+.local-tests/
+
+.build-runtime/
+src-tauri/runtime/
+src-tauri/gen/schemas/

@@ -1,0 +1,10 @@
+{
+  "bundle": {
+    "resources": {
+      "runtime/": "runtime/"
+    },
+    "macOS": {
+      "minimumSystemVersion": "26.0"
+    }
+  }
+}

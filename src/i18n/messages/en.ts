@@ -1,0 +1,233 @@
+import type { Messages } from "./es";
+
+export const en: Messages = {
+  "app.title": "Subtle — subtitles, without the hassle",
+  "app.language": "Language",
+  "language.es": "Español",
+  "language.en": "English",
+
+  "topbar.savedLocally": "Saved locally",
+  "topbar.renameProject": "Rename project",
+  "topbar.projectName": "Project name",
+  "topbar.openProject": "Open project",
+  "topbar.saveProject": "Save project",
+  "topbar.export": "Export",
+
+  "rail.subtitles": "Subtitles",
+  "rail.video": "Video",
+  "rail.script": "Script",
+  "rail.local": "LOCAL",
+
+  "transcript.title": "Subtitles",
+  "transcript.importOrTranscribe": "Import or transcribe",
+  "transcript.generate": "Generate subtitles",
+  "transcript.searchLabel": "Search subtitles",
+  "transcript.searchPlaceholder": "Search the text…",
+  "transcript.addAtStart": "Add block at the start",
+  "transcript.addAtEnd": "Add block at the end",
+  "transcript.addBefore": "Add block before",
+  "transcript.deleteBlock": "Delete block",
+  "transcript.showBlock": "Show block",
+  "transcript.omitBlock": "Omit block",
+  "transcript.approximateTiming": "Approximate timing: review",
+  "transcript.wordLabel": "Word {text}",
+  "transcript.deleteWord": "Delete word",
+  "transcript.showWord": "Show word",
+  "transcript.omitWord": "Omit word",
+  "transcript.wordCount": "{count} words",
+  "transcript.ownStyle": "· Own style",
+  "transcript.mergeWithPrevious": "Merge with previous",
+  "transcript.hintSplit": "split",
+  "transcript.hintMerge": "merge at start",
+
+  "preview.title": "PREVIEW",
+  "preview.createProxy": "Create proxy + waveform",
+  "preview.rendererReady": "libass · {source}",
+  "preview.sourceProxy": "Proxy",
+  "preview.sourceOriginal": "Original",
+  "preview.sourceDemo": "Demo",
+  "preview.rendererError": "The subtitles could not be rendered",
+  "preview.rendererLoading": "Preparing preview…",
+  "preview.canvasLabel": "Subtitles rendered with libass",
+  "preview.demoEyebrow": "A SPACE FOR YOUR IDEAS",
+  "preview.demoTitle": "Make it",
+  "preview.demoTitleEmphasis": "yours.",
+  "preview.demoImport": "Import your video",
+  "preview.demoLabel": "SUBTLE / CREATIVE STUDIO",
+  "preview.resizeFromLeft": "Adjust width from the left",
+  "preview.resizeFromRight": "Adjust width from the right",
+  "preview.scaleFromCorner": "Scale text from corner",
+  "preview.expand": "Expand the preview",
+  "preview.collapse": "Back to the editor",
+  "preview.previousBlock": "Previous block",
+  "preview.nextBlock": "Next block",
+  "preview.play": "Play",
+  "preview.pause": "Pause",
+  "preview.unplayable":
+    "This video cannot be played in the embedded browser. Try a compatible MP4.",
+  "preview.unsupportedFormat":
+    "Unsupported preview format. Use “Create proxy + waveform” to play it.",
+
+  "inspector.title": "Style",
+  "inspector.scopeBlock": "This block only",
+  "inspector.scopeAll": "All subtitles",
+  "inspector.scopeBlockHint": "Independent changes",
+  "inspector.scopeAllHint": "One style, your whole video",
+  "inspector.onlyThisBlock": "This block only",
+  "inspector.typography": "TYPOGRAPHY",
+  "inspector.font": "Font",
+  "inspector.size": "Size",
+  "inspector.color": "Color",
+  "inspector.opacity": "Opacity",
+  "inspector.outline": "Outline",
+  "inspector.shadow": "Shadow",
+  "inspector.animation": "ANIMATION",
+  "inspector.animationNormal": "Normal",
+  "inspector.animationProgressive": "Progressive",
+  "inspector.animationWord": "Word",
+  "inspector.animationNormalHelp": "The whole block stays on screen.",
+  "inspector.animationProgressiveHelp":
+    "Each word appears on time. The sentence keeps its position.",
+  "inspector.animationWordHelp": "A single word, in sync with the voice.",
+  "inspector.layout": "POSITION AND WIDTH",
+  "inspector.maxWidth": "Maximum width · %",
+  "inspector.maxWidthLabel": "Maximum width",
+  "inspector.axis": "{axis} · %",
+  "inspector.dragHelp": "Drag the text over the video to place it.",
+  "inspector.word": "WORD · {text}",
+  "inspector.wordReview":
+    "Approximate timing. Listen to this fragment and adjust its limits.",
+  "inspector.goToWord": "Go to word",
+  "inspector.wordStart": "Word start",
+  "inspector.wordEnd": "Word end",
+  "inspector.markReviewed": "Mark timing as reviewed",
+  "inspector.blockTiming": "BLOCK TIMING · SECONDS",
+  "inspector.start": "Start",
+  "inspector.end": "End",
+
+  "timeline.undo": "Undo",
+  "timeline.redo": "Redo",
+  "timeline.splitAtPlayhead": "Split at playhead",
+  "timeline.title": "Timeline",
+  "timeline.zoom": "Zoom",
+  "timeline.zoomLabel": "Timeline zoom",
+  "timeline.subtitlesTrack": "Subtitles",
+  "timeline.videoTrack": "Video",
+  "timeline.omitted": "Omitted",
+  "timeline.demoMedia": "Demo video · import an original to get started",
+  "timeline.playhead": "Playhead",
+
+  "footer.local": "Everything happens on your computer",
+  "footer.toReview": "{count} timings to review ·",
+  "footer.omittedWords": "{count} omitted words",
+  "footer.version": "Subtle {version}",
+
+  "notice.close": "Close notice",
+  "notice.saved": "Saved: {path}",
+  "notice.videoExported": "Video exported: {path}",
+  "notice.blockAdded":
+    "Block added. Review the approximate timing of its words.",
+  "notice.subtitlesGenerated":
+    "Subtitles generated. {count} words have approximate timing and are flagged for review.",
+  "notice.noWords": "No words were found.",
+  "notice.transcriptionNeedsDesktop":
+    "Local transcription is available when Subtle is opened with Tauri.",
+  "notice.exportNeedsDesktop":
+    "Import the original in the desktop application to export video.",
+  "notice.jobRunningOnClose":
+    "A job is in progress. Wait for it to finish or cancel it before closing.",
+  "notice.saveBeforeCloseFailed":
+    "Could not save before closing: {error}. Save a copy of the project.",
+  "notice.relinkVideo": "Locate original video",
+
+  "storage.autosaveFailed": "Could not autosave. Save a copy of the project.",
+  "storage.diskWriteFailed":
+    "Could not save to disk: {error}. Save a copy of the project.",
+  "storage.backupRestored": "The project backup has been recovered.",
+  "storage.diskUnreadable":
+    "Could not open the saved project on disk. The local copy is kept; save a copy of the project.",
+  "storage.recoveryFailed": "Could not read the recovery data: {error}",
+
+  "job.cancelling": "Cancelling…",
+  "job.cancel": "Cancel job",
+  "job.progress": "Progress",
+  "job.preparingPreview": "Preparing a lightweight preview…",
+  "job.aligningScript": "Syncing the script with the audio…",
+  "job.transcribing": "Transcribing the audio…",
+  "job.exporting": "Exporting from the original…",
+
+  "insert.title": "Add subtitle",
+  "insert.help":
+    "Existing blocks keep their timing. If there is no gap, adjust the end or start of the neighbouring block first.",
+  "insert.textLabel": "Text of the new block",
+  "insert.textPlaceholder": "Type the subtitle…",
+  "insert.start": "Start (s)",
+  "insert.end": "End (s)",
+  "insert.cancel": "Cancel",
+  "insert.submit": "Add block",
+
+  "import.dialogLabel": "Generate subtitles",
+  "import.title": "Every word, in its place.",
+  "import.intro":
+    "Import a video and add your script to sync it, or leave the field empty to transcribe the audio.",
+  "import.selectVideo": "Select video",
+  "import.formats": "MP4, MOV, MKV or WebM",
+  "import.scriptLabel": "Optional script · Spanish",
+  "import.importTxt": "Import TXT",
+  "import.scriptPlaceholder": "Paste here what is said in the video…",
+  "import.replacesBlocks":
+    "Generating replaces the current blocks and can be undone.",
+  "import.engineReady": "Local engine ready. The audio stays on this computer.",
+  "import.engineMissing":
+    "The speech engine is not installed on this computer.",
+  "import.engineChecking": "Checking the local engine…",
+  "import.alignScript": "Sync script",
+  "import.transcribeAudio": "Transcribe audio",
+  "import.continueEditing": "Continue editing",
+  "dialog.close": "Close",
+
+  "export.dialogLabel": "Export",
+  "export.title": "Ready to share.",
+  "export.intro":
+    "Hidden subtitles are omitted. Their original timing is kept in the project.",
+  "export.stlRate": "STL · time base",
+  "export.fps": "{fps} fps",
+  "export.stl": "Subtitles .stl · EBU",
+  "export.stlHint": "Text and timing · {fps} fps · no animations",
+  "export.srt": "Subtitles .srt",
+  "export.srtHint": "Text and timing, no styles",
+  "export.ass": "Subtitles .ass",
+  "export.assHint": "Styles and animations",
+  "export.videoHelp":
+    "Video: initial 8-bit SDR export, high-quality H.264 with copied audio. HDR and rotated originals need additional support. Text preview is approximate.",
+  "export.video": "Export subtitled video",
+  "export.videoFileName": "{name}-subtitled.mp4",
+  "export.needsDesktop":
+    "Open the desktop application and import a video to export it.",
+
+  "crash.title": "Something went wrong in the interface.",
+  "crash.help":
+    "The project is saved automatically on every change, so you can reload without losing anything.",
+  "crash.reload": "Reload",
+
+  "error.block.retimeOutOfRange":
+    "Timings must stay inside the video and must not overlap other blocks.",
+  "error.word.retimeOutOfRange":
+    "The word timing must stay between its neighbours and inside the video.",
+  "error.block.insertInvalid":
+    "Enter text and a valid interval inside the video.",
+  "error.block.insertOverlap":
+    "That interval already has subtitles. Adjust the neighbouring blocks to make room.",
+  "error.project.invalid": "Invalid project.",
+  "error.project.invalidBlock": "Invalid block.",
+  "error.project.invalidWords": "Invalid words or timings.",
+  "error.stl.unsupportedCharacter":
+    "The initial STL exporter does not support “{character}”. Use SRT or fix that character.",
+  "error.stl.tooManyBlocks": "Too many blocks for STL.",
+  "error.stl.timeOutOfRange": "STL requires timings below 24 hours.",
+  "error.stl.wordTooLong": "STL: a word exceeds 42 characters.",
+  "error.stl.tooManyRows":
+    "STL: split the block into at most two rows of 42 characters.",
+  "error.stl.blockTooLong": "STL: block too long.",
+  "error.stl.blockTooShort": "STL: block shorter than one frame.",
+};

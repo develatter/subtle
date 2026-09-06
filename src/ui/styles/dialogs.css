@@ -1,0 +1,148 @@
+/* Modal dialogs: import, export, insertion and job status. */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #09090dbb;
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+}
+.modal {
+  width: 470px;
+  max-height: 90vh;
+  overflow: auto;
+  background: #1c1c22;
+  border: 1px solid #414047;
+  border-radius: 16px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 30px 100px #0008;
+}
+.modal-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+.modal h1 {
+  font-size: 23px;
+  letter-spacing: -0.6px;
+  margin-bottom: 10px;
+}
+.modal p {
+  color: #a2a0ae;
+  line-height: 1.7;
+  margin-bottom: 19px;
+  font-size: 12px;
+}
+.modal .help {
+  font-size: 10px;
+  margin: 13px 0;
+}
+.import-drop {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px dashed #60516f;
+  background: #c3a3ff08;
+  color: #ceb4ed;
+  margin-bottom: 20px;
+}
+.import-drop span {
+  font-size: 10px;
+  color: #88828f;
+}
+.script-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #b1aabf;
+}
+.script-label button {
+  font-size: 10px;
+  color: #c4aceb;
+}
+.modal textarea {
+  width: 100%;
+  height: 140px;
+  resize: vertical;
+  margin-top: 8px;
+  line-height: 1.6;
+  background: #15151a;
+}
+.full {
+  width: 100%;
+  padding: 12px;
+}
+.text-button {
+  width: 100%;
+  margin-top: 9px;
+  font-size: 11px;
+  color: #a49aaf;
+}
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.export-options > button {
+  justify-content: flex-start;
+  border: 1px solid #3a3444;
+  padding: 15px;
+  gap: 14px;
+  text-align: left;
+}
+.export-options > button > span {
+  flex: 1;
+}
+.export-options strong {
+  font-size: 12px;
+  display: block;
+  font-weight: 500;
+}
+.export-options small {
+  font-size: 10px;
+  color: #96909f;
+  display: block;
+  margin-top: 5px;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.stl-rate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a69caf;
+  font-size: 11px;
+  margin: 12px 0;
+}
+.stl-rate select {
+  padding: 5px 8px;
+}
+.job-status {
+  border: 1px solid #665277;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+  color: #d8c2f1;
+}
+.job-status progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #c3a6ef;
+}
+.job-status button {
+  border: 1px solid #695b76;
+  font-size: 11px;
+}

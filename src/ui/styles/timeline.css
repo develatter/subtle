@@ -1,0 +1,192 @@
+/* Timeline: toolbar, tracks, blocks and playhead. */
+.timeline-panel {
+  height: 197px;
+  flex: none;
+  border-top: 1px solid #303036;
+  background: #18191c;
+}
+.timeline-toolbar {
+  height: 45px;
+  border-bottom: 1px solid #2b2c31;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.timeline-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.timeline-toolbar input {
+  width: 84px;
+}
+.timeline-caption {
+  font-size: 10px;
+  color: #93939e;
+  margin-left: 8px;
+}
+.zoom-label {
+  font-size: 9px;
+  color: #96939f;
+  min-width: 32px;
+}
+.tracks {
+  display: flex;
+  height: 150px;
+}
+.track-labels {
+  width: 125px;
+  flex: none;
+  border-right: 1px solid #292a2e;
+  display: flex;
+  flex-direction: column;
+  color: #868590;
+  font-size: 10px;
+}
+.track-labels > span {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 15px;
+}
+.track-labels > span:first-child {
+  height: 31px;
+}
+.timeline-scroll {
+  overflow-x: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3843 transparent;
+}
+.timeline-content {
+  height: 139px;
+  position: relative;
+  min-width: 100%;
+}
+.ruler {
+  height: 31px;
+  position: relative;
+  margin-right: 25px;
+  border-bottom: 1px solid #26272c;
+}
+.ruler > span {
+  position: absolute;
+  font-size: 9px;
+  color: #6f717d;
+  top: 9px;
+  transform: translateX(3px);
+  font-variant-numeric: tabular-nums;
+}
+.ruler > span:after {
+  content: "";
+  height: 5px;
+  width: 1px;
+  background: #45434d;
+  position: absolute;
+  top: 17px;
+  left: 0;
+}
+.subtitle-track,
+.video-track {
+  height: 48px;
+  position: relative;
+  border-bottom: 1px solid #222328;
+}
+.timeline-block {
+  position: absolute;
+  top: 8px;
+  height: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  justify-content: flex-start;
+  background: #4b3c61;
+  border: 1px solid #7a6097;
+  color: #dbcaed;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  touch-action: none;
+}
+.timeline-block:hover {
+  background: #5a4773;
+}
+.timeline-block.selected {
+  background: #705686;
+  border-color: #d1aff4;
+}
+.timeline-block.muted {
+  opacity: 0.35;
+}
+.timeline-block svg {
+  flex: none;
+}
+.media-strip {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 1px;
+  height: 31px;
+  border: 1px solid #3e4851;
+  border-radius: 5px;
+  color: #9aabb8;
+  background: repeating-linear-gradient(
+    115deg,
+    #29313a 0,
+    #29313a 35px,
+    #262e35 35px,
+    #262e35 70px
+  );
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  font-size: 10px;
+}
+.playhead {
+  position: absolute;
+  top: 22px;
+  bottom: 0;
+  width: 18px;
+  transform: translateX(-50%);
+  background: linear-gradient(#d5b6ff, #d5b6ff) center / 1px 100% no-repeat;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+  z-index: 3;
+}
+.playhead i {
+  position: absolute;
+  top: -4px;
+  left: calc(50% - 4.5px);
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: #d5b6ff;
+  transform: rotate(45deg);
+}
+.media-strip {
+  overflow: hidden;
+}
+.waveform {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  opacity: 0.55;
+}
+.media-strip > span,
+.media-strip > svg {
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 3px #000;
+}
+
+.playhead:focus,
+.playhead:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
