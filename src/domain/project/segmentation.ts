@@ -52,3 +52,21 @@ export function fromWords(words: TranscribedWord[], name: string): Project {
   flush();
   return { version: 1, name, blocks, style: { ...defaultStyle } };
 }
+
+/**
+ * Cuts transcribed words at the media end. Aligners can run past the audio;
+ * a word cut short is flagged for review, and words starting after the end
+ * are dropped.
+ */
+export function clampWordsToDuration(
+  words: TranscribedWord[],
+  duration: number,
+): TranscribedWord[] {
+  if (!Number.isFinite(duration) || duration <= 0) return words;
+  const kept: TranscribedWord[] = [];
+  for (const w of words) {
+    if (w.start >= duration) break;
+    kept.push(w.end > duration ? { ...w, end: duration, review: true } : w);
+  }
+  return kept;
+}

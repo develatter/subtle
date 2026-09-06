@@ -72,3 +72,19 @@ test("legacy multiword tokens are repaired on load without shifting subsequent w
   assert.equal(next.blocks[0].words.length, 3);
   assert.deepEqual(next.blocks[1], p.blocks[1]);
 });
+import { clampWordsToDuration } from "../src/domain/index.ts";
+test("transcribed words are cut at the media end and flagged, never extended", () => {
+  const words = clampWordsToDuration(
+    [
+      { word: "a", start: 0, end: 1 },
+      { word: "b", start: 1, end: 2.5 },
+      { word: "c", start: 2.6, end: 3 },
+    ],
+    2.2,
+  );
+  assert.deepEqual(words, [
+    { word: "a", start: 0, end: 1 },
+    { word: "b", start: 1, end: 2.2, review: true },
+  ]);
+  assert.equal(clampWordsToDuration(words, 0).length, 2);
+});

@@ -111,6 +111,7 @@ export const en: Messages = {
   "timeline.title": "Timeline",
   "timeline.zoom": "Zoom",
   "timeline.zoomLabel": "Timeline zoom",
+  "timeline.resize": "Change the timeline height",
   "timeline.subtitlesTrack": "Subtitles",
   "timeline.videoTrack": "Video",
   "timeline.omitted": "Omitted",
@@ -118,8 +119,10 @@ export const en: Messages = {
   "timeline.playhead": "Playhead",
 
   "footer.local": "Everything happens on your computer",
-  "footer.toReview": "{count} timings to review ·",
-  "footer.omittedWords": "{count} omitted words",
+  "footer.toReview": "{count} words with approximate timing",
+  "footer.toReviewHint":
+    "Syncing could not place these words precisely. Click to go to the next one and adjust its timing in the inspector.",
+  "footer.allReviewed": "All timings reviewed",
   "footer.version": "Subtle {version}",
 
   "notice.close": "Close notice",

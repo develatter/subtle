@@ -119,6 +119,7 @@ export const es = {
   "timeline.title": "Línea de tiempo",
   "timeline.zoom": "Zoom",
   "timeline.zoomLabel": "Zoom de línea de tiempo",
+  "timeline.resize": "Cambiar la altura de la línea de tiempo",
   "timeline.subtitlesTrack": "Subtítulos",
   "timeline.videoTrack": "Vídeo",
   "timeline.omitted": "Omitido",
@@ -128,8 +129,10 @@ export const es = {
 
   // Footer
   "footer.local": "Todo sucede en tu equipo",
-  "footer.toReview": "{count} tiempos por revisar ·",
-  "footer.omittedWords": "{count} palabras omitidas",
+  "footer.toReview": "{count} palabras con tiempo aproximado",
+  "footer.toReviewHint":
+    "La sincronización no pudo situar estas palabras con precisión. Pulsa para ir a la siguiente y ajustar sus tiempos en el inspector.",
+  "footer.allReviewed": "Todos los tiempos revisados",
   "footer.version": "Subtle {version}",
 
   // Notices and alerts

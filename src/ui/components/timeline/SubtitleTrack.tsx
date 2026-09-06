@@ -54,10 +54,12 @@ export function SubtitleTrack({ timeline }: Props) {
     <div className="subtitle-track">
       {project.blocks.map((block) => {
         const [start, end] = bounds(block);
+        const approximate = block.words.some((w) => w.review && !w.hidden);
         return (
           <button
             key={block.id}
-            className={`timeline-block ${block.id === selectedId ? "selected" : ""} ${block.hidden ? "muted" : ""}`}
+            className={`timeline-block ${block.id === selectedId ? "selected" : ""} ${block.hidden ? "muted" : ""} ${approximate ? "approximate" : ""}`}
+            title={approximate ? t("transcript.approximateTiming") : undefined}
             style={{
               left: (start / duration) * 100 + "%",
               width: ((end - start) / duration) * 100 + "%",

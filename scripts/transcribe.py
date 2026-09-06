@@ -98,6 +98,31 @@ def normalize_words(raw):
     return words
 
 
+def audio_duration(source):
+    """Duration of the first audio stream in seconds, or None if unknown."""
+    import subprocess
+    try:
+        out = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'a:0', '-show_entries',
+                              'stream=duration', '-of', 'json', source], capture_output=True, text=True, check=True).stdout
+        return float(json.loads(out)['streams'][0]['duration'])
+    except Exception:
+        return None
+
+
+def clamp_to_duration(words, duration):
+    """Aligners may run past the end of the audio. Cut words there and flag the ones touched."""
+    if duration is None:
+        return words
+    kept = []
+    for w in words:
+        if w['start'] >= duration:
+            break
+        if w['end'] > duration:
+            w = {**w, 'end': round(duration, 6), 'review': True}
+        kept.append(w)
+    return kept
+
+
 def main():
     progress(message('preparing_engine'))
     import torch
@@ -127,7 +152,7 @@ def main():
     if result is None:
         raise ValueError(message('align_failed'))
     raw = [word for segment in result.to_dict()['segments'] for word in segment.get('words', [])]
-    words = normalize_words(raw)
+    words = clamp_to_duration(normalize_words(raw), audio_duration(source))
     if not words:
         raise ValueError(message('no_speech'))
     review = sum(w['review'] for w in words)

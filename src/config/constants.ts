@@ -7,6 +7,7 @@ export const STORAGE_KEYS = {
   /** Browser copy of the project; also the migration source for older versions. */
   project: "subtle-project",
   locale: "subtle-locale",
+  timelineHeight: "subtle-timeline-height",
 } as const;
 
 /** Undo history depth kept in memory per session. */
@@ -32,8 +33,14 @@ export const LIBASS_ASSETS = {
 /** Keyboard step for the playhead: one frame at 30 fps, or one second with Shift. */
 export const PLAYHEAD_STEP = { frame: 1 / 30, second: 1 } as const;
 
-/** Timeline zoom range. */
-export const TIMELINE_ZOOM = { min: 1, max: 5, step: 0.25 } as const;
+/** Timeline zoom range (1 = the whole media fits the viewport). */
+export const TIMELINE_ZOOM = { min: 1, max: 40, step: 0.25 } as const;
+
+/** Wheel sensitivity for Ctrl/⌘ + scroll and pinch zoom on the timeline. */
+export const TIMELINE_WHEEL_ZOOM_RATE = 0.01;
+
+/** Timeline panel height limits (px); the extra height enlarges the waveform. */
+export const TIMELINE_HEIGHT = { default: 197, min: 150, max: 520 } as const;
 
 /** Seconds between ruler marks on the timeline. */
 export const RULER_INTERVAL_SECONDS = 2;

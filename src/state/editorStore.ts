@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { FALLBACK_FONTS, INITIAL_TIME } from "../config/constants";
+import {
+  FALLBACK_FONTS,
+  INITIAL_TIME,
+  STORAGE_KEYS,
+  TIMELINE_HEIGHT,
+} from "../config/constants";
 import type { Project } from "../domain/project";
 import type { StlFrameRate } from "../domain/export";
 import { useProjectStore } from "./projectStore";
@@ -34,6 +39,7 @@ export type EditorState = {
   playing: boolean;
   media: Media | null;
   zoom: number;
+  timelineHeight: number;
   fonts: string[];
   dialog: Dialog | null;
   script: string;
@@ -57,6 +63,7 @@ export type EditorState = {
     media: Media | null | ((media: Media | null) => Media | null),
   ) => void;
   setZoom: (zoom: number) => void;
+  setTimelineHeight: (height: number) => void;
   setFonts: (fonts: string[]) => void;
   openDialog: (dialog: Dialog | null) => void;
   setScript: (script: string) => void;
@@ -73,6 +80,21 @@ export type EditorState = {
   setStlFps: (fps: StlFrameRate) => void;
 };
 
+const clampHeight = (height: number) =>
+  Math.round(
+    Math.max(TIMELINE_HEIGHT.min, Math.min(TIMELINE_HEIGHT.max, height)),
+  );
+
+function storedTimelineHeight(): number {
+  try {
+    const saved = Number(localStorage.getItem(STORAGE_KEYS.timelineHeight));
+    if (Number.isFinite(saved) && saved > 0) return clampHeight(saved);
+  } catch {
+    /* Storage unavailable: use the default. */
+  }
+  return TIMELINE_HEIGHT.default;
+}
+
 export const useEditorStore = create<EditorState>((set) => ({
   selectedBlockId: useProjectStore.getState().project.blocks[0]?.id ?? "",
   selectedWordId: "",
@@ -80,6 +102,7 @@ export const useEditorStore = create<EditorState>((set) => ({
   playing: false,
   media: null,
   zoom: 1,
+  timelineHeight: storedTimelineHeight(),
   fonts: FALLBACK_FONTS,
   dialog: null,
   script: "",
@@ -103,6 +126,15 @@ export const useEditorStore = create<EditorState>((set) => ({
       media: typeof media === "function" ? media(s.media) : media,
     })),
   setZoom: (zoom) => set({ zoom }),
+  setTimelineHeight: (height) => {
+    const timelineHeight = clampHeight(height);
+    try {
+      localStorage.setItem(STORAGE_KEYS.timelineHeight, String(timelineHeight));
+    } catch {
+      /* Preference simply will not persist. */
+    }
+    set({ timelineHeight });
+  },
   setFonts: (fonts) => set({ fonts }),
   openDialog: (dialog) => set({ dialog }),
   setScript: (script) => set({ script }),

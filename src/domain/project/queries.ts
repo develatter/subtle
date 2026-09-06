@@ -37,12 +37,6 @@ export const reviewCount = (project: Project): number =>
   project.blocks.flatMap((b) => b.words).filter((w) => w.review && !w.hidden)
     .length;
 
-export const omittedWordCount = (project: Project): number =>
-  project.blocks.reduce(
-    (sum, b) => sum + b.words.filter((w) => w.hidden || b.hidden).length,
-    0,
-  );
-
 export const matchesQuery = (block: Block, query: string): boolean =>
   block.words.some((w) => w.text.toLowerCase().includes(query.toLowerCase()));
 
@@ -77,3 +71,19 @@ export function insertionGap(
 /** Index of the first word starting at or after `time`. */
 export const wordIndexAt = (block: Block, time: number): number =>
   block.words.findIndex((w) => w.start >= time);
+
+/**
+ * Next word flagged for review after `afterWordId` (cycling to the start), or
+ * the first one when nothing is selected. Hidden words are skipped.
+ */
+export function nextReviewWord(
+  project: Project,
+  afterWordId: string,
+): { block: Block; word: Word } | undefined {
+  const entries = project.blocks.flatMap((block) =>
+    block.words.map((word) => ({ block, word })),
+  );
+  const from = entries.findIndex((e) => e.word.id === afterWordId);
+  const ordered = [...entries.slice(from + 1), ...entries.slice(0, from + 1)];
+  return ordered.find((e) => e.word.review && !e.word.hidden);
+}

@@ -1,7 +1,9 @@
 /* Timeline: toolbar, tracks, blocks and playhead. */
 .timeline-panel {
-  height: 197px;
   flex: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
   border-top: 1px solid #303036;
   background: #18191c;
 }
@@ -33,7 +35,8 @@
 }
 .tracks {
   display: flex;
-  height: 150px;
+  flex: 1;
+  min-height: 0;
 }
 .track-labels {
   width: 125px;
@@ -54,6 +57,9 @@
 .track-labels > span:first-child {
   height: 31px;
 }
+.track-labels > span:last-child {
+  flex: 1;
+}
 .timeline-scroll {
   overflow-x: auto;
   flex: 1;
@@ -61,12 +67,15 @@
   scrollbar-color: #3a3843 transparent;
 }
 .timeline-content {
-  height: 139px;
+  height: 100%;
   position: relative;
   min-width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .ruler {
   height: 31px;
+  flex: none;
   position: relative;
   margin-right: 25px;
   border-bottom: 1px solid #26272c;
@@ -91,8 +100,13 @@
 .subtitle-track,
 .video-track {
   height: 48px;
+  flex: none;
   position: relative;
   border-bottom: 1px solid #222328;
+}
+.video-track {
+  flex: 1;
+  min-height: 48px;
 }
 .timeline-block {
   position: absolute;
@@ -120,15 +134,19 @@
 .timeline-block.muted {
   opacity: 0.35;
 }
+.timeline-block.approximate {
+  border-style: dashed;
+  border-color: #d7b77a;
+}
 .timeline-block svg {
   flex: none;
 }
 .media-strip {
   position: absolute;
   top: 8px;
+  bottom: 9px;
   left: 0;
   right: 1px;
-  height: 31px;
   border: 1px solid #3e4851;
   border-radius: 5px;
   color: #9aabb8;
@@ -189,4 +207,19 @@
 .playhead:focus-visible {
   outline: none;
   box-shadow: none;
+}
+
+.timeline-resize {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: ns-resize;
+  z-index: 4;
+  touch-action: none;
+}
+.timeline-resize:hover,
+.timeline-resize:active {
+  background: linear-gradient(#c5b1f780, #c5b1f780) center / 100% 2px no-repeat;
 }

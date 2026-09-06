@@ -158,8 +158,12 @@ try {
     .first()
     .click();
   check(
-    (await text()).includes("1 palabras omitidas"),
-    "footer counts omitted words",
+    (await page
+      .locator(".text-block")
+      .first()
+      .locator(".hidden-word")
+      .count()) === 1,
+    "eye button omits the word",
   );
 
   await page.locator('input[aria-label="Tamaño"]').fill("80");
@@ -211,6 +215,39 @@ try {
   await page.keyboard.press("Space");
   const time = await page.locator(".current-time").innerText();
   check(!time.startsWith("00:00.70"), "space toggles demo playback");
+
+  const scrollBox = await page.locator(".timeline-scroll").boundingBox();
+  await page.mouse.move(
+    scrollBox.x + scrollBox.width / 2,
+    scrollBox.y + scrollBox.height / 2,
+  );
+  await page.mouse.wheel(0, -300);
+  check(
+    (await page.locator(".zoom-label").innerText()) === "100%",
+    "plain wheel does not zoom",
+  );
+  await page.keyboard.down("Control");
+  await page.mouse.wheel(0, -300);
+  await page.keyboard.up("Control");
+  check(
+    (await page.locator(".zoom-label").innerText()) !== "100%",
+    "ctrl+wheel zooms the timeline",
+  );
+  const heightBefore = await page
+    .locator(".timeline-panel")
+    .evaluate((el) => el.offsetHeight);
+  const handle = await page.locator(".timeline-resize").boundingBox();
+  await page.mouse.move(handle.x + 300, handle.y + 4);
+  await page.mouse.down();
+  await page.mouse.move(handle.x + 300, handle.y - 100, { steps: 5 });
+  await page.mouse.up();
+  const heightAfter = await page
+    .locator(".timeline-panel")
+    .evaluate((el) => el.offsetHeight);
+  check(
+    heightAfter > heightBefore + 50,
+    `timeline resizes by dragging (${heightBefore} → ${heightAfter})`,
+  );
 
   await page.locator(".transport button").last().click();
   check(

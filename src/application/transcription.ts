@@ -1,4 +1,8 @@
-import { fromWords, validateProject } from "../domain/project";
+import {
+  clampWordsToDuration,
+  fromWords,
+  validateProject,
+} from "../domain/project";
 import { services } from "../infrastructure/services";
 import { translate } from "../i18n";
 import { useEditorStore } from "../state/editorStore";
@@ -23,7 +27,10 @@ export async function transcribe(): Promise<void> {
     translate(aligning ? "job.aligningScript" : "job.transcribing"),
   );
   try {
-    const words = await services.speech.transcribe(script, id);
+    const words = clampWordsToDuration(
+      await services.speech.transcribe(script, id),
+      media.duration,
+    );
     if (!words.length) throw Error(translate("notice.noWords"));
     const next = fromWords(words, stripExtension(media.name));
     next.source = currentProject().source;
