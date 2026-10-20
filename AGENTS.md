@@ -1,47 +1,47 @@
-# Subtle · guía para agentes y colaboradores
+# Subtle · guide for agents and contributors
 
-Editor local de subtítulos para vídeos verticales. Escritorio con Tauri 2 (Rust), interfaz React 19 + TypeScript, worker de transcripción en Python (stable-ts/Whisper), FFmpeg/ffprobe y libass (nativo en exportación, WASM en la preview).
+Local subtitle editor for vertical videos. Desktop app with Tauri 2 (Rust), React 19 + TypeScript interface, Python transcription worker (stable-ts/Whisper), FFmpeg/ffprobe and libass (native for export, WASM for the preview).
 
-## Comandos
+## Commands
 
 ```sh
-npm run desktop            # app de escritorio en desarrollo (detecta .venv y .models)
-npm run dev                # solo la interfaz web en http://127.0.0.1:1420
-npm test                   # tests de dominio y persistencia (node:test)
-npm run test:ui            # prueba de humo de la interfaz con Playwright
+npm run desktop            # desktop app in development (detects .venv and .models)
+npm run dev                # web interface only at http://127.0.0.1:1420
+npm test                   # domain and persistence tests (node:test)
+npm run test:ui            # Playwright smoke test of the interface
 npm run build              # tsc + vite
-npm run check:export       # exportación real con FFmpeg
+npm run check:export       # real export with FFmpeg
 npm run format             # prettier
-cargo clippy --manifest-path src-tauri/Cargo.toml   # sin avisos
+cargo clippy --manifest-path src-tauri/Cargo.toml   # no warnings
 cargo test --manifest-path src-tauri/Cargo.toml
-python3 scripts/check-speech.py                     # desde scripts/
+python3 scripts/check-speech.py                     # from scripts/
 ```
 
-Antes de dar algo por terminado: `npm test`, `npm run build`, clippy y `cargo test` en verde, y Prettier aplicado.
+Before calling something done: `npm test`, `npm run build`, clippy and `cargo test` green, and Prettier applied.
 
-## Arquitectura (frontend)
+## Architecture (frontend)
 
-Dependencias solo hacia dentro: `ui → application → domain`.
+Dependencies only point inwards: `ui → application → domain`.
 
-| Capa            | Ruta                      | Regla                                                                                                          |
-| --------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Dominio         | `src/domain/`             | Puro. Sin React, Tauri, DOM ni texto de interfaz. Los errores son `DomainError` con código.                    |
-| Aplicación      | `src/application/`        | Casos de uso y puertos (`ports.ts`). Habla con el entorno solo a través de los puertos.                        |
-| Infraestructura | `src/infrastructure/`     | Implementaciones de los puertos. `tauri/commands.ts` es el único sitio que conoce nombres de comandos nativos. |
-| Estado          | `src/state/`              | Stores zustand: proyecto (con historial y persistencia) e interfaz.                                            |
-| Interfaz        | `src/ui/`                 | Componentes por panel, hooks, estilos por área en `ui/styles/`.                                                |
-| i18n            | `src/i18n/`               | `es.ts` define las claves; `en.ts` debe tener las mismas.                                                      |
-| Config          | `src/config/constants.ts` | Límites, claves de almacenamiento, rutas de assets. Nada mágico en los componentes.                            |
+| Layer          | Path                      | Rule                                                                                         |
+| -------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
+| Domain         | `src/domain/`             | Pure. No React, Tauri, DOM or interface text. Errors are `DomainError` with a code.          |
+| Application    | `src/application/`        | Use cases and ports (`ports.ts`). Talks to the environment only through the ports.           |
+| Infrastructure | `src/infrastructure/`     | Port implementations. `tauri/commands.ts` is the only place that knows native command names. |
+| State          | `src/state/`              | Zustand stores: project (with history and persistence) and interface.                        |
+| UI             | `src/ui/`                 | Components per panel, hooks, styles per area in `ui/styles/`.                                |
+| i18n           | `src/i18n/`               | `es.ts` defines the keys; `en.ts` must have the same ones.                                   |
+| Config         | `src/config/constants.ts` | Limits, storage keys, asset paths. Nothing magic in components.                              |
 
-Backend Rust en `src-tauri/src/`, un módulo por capacidad (`media`, `preview`, `export`, `speech`, `fonts`, `documents`, `persistence`, `jobs`, `process`, `i18n`). Un comando nuevo se registra en `main.rs` y se refleja en `commands.ts` y en los puertos.
+Rust backend in `src-tauri/src/`, one module per capability (`media`, `preview`, `export`, `speech`, `fonts`, `documents`, `persistence`, `jobs`, `process`, `i18n`). A new command is registered in `main.rs` and mirrored in `commands.ts` and the ports.
 
-## Reglas
+## Rules
 
-- **No romper el formato de proyecto** (`version: 1`), los nombres de comandos nativos ni el protocolo del worker (`@subtle` en stderr, JSON en stdout) sin actualizar validación, tests y README.
-- **Sin texto de interfaz fuera de i18n.** Frontend: `t("clave")` o `translate()` fuera de React. Rust: `Msg` en `i18n.rs`. Python: `MESSAGES` en `transcribe.py`. Añadir la clave en los dos idiomas.
-- **Tiempos de las palabras son sagrados.** Editar, omitir o dividir nunca desplaza palabras vecinas. Cualquier operación nueva del dominio necesita test en `tests/`.
-- **Exportación:** los timestamps del original se conservan; la única excepción documentada es el desplazamiento de `video_filter` para originales sin edit list. Cambios en `export-args.json` pasan por `npm run check:export` y `check-export-variants.mjs`.
-- **Nada bloquea la UI:** los trabajos nativos van por `jobs::Ticket` con progreso y cancelación; uno a la vez.
-- **Persistencia:** escritura temporal + rename, copia de seguridad validada. No escribir archivos de usuario sin pasar por un diálogo.
-- **Estilo:** Prettier por defecto, TypeScript estricto, sin `any`, sin comentarios que repitan el código; comentar el porqué. Rust con `cargo fmt` y clippy limpio. Español en textos de usuario y README; inglés en código, comentarios e identificadores.
-- **Commits:** solo cuando se pidan. Mensajes en imperativo, una línea de resumen.
+- **Do not break the project format** (`version: 1`), native command names or the worker protocol (`@subtle` on stderr, JSON on stdout) without updating validation, tests and the README.
+- **No interface text outside i18n.** Frontend: `t("key")`, or `translate()` outside React. Rust: `Msg` in `i18n.rs`. Python: `MESSAGES` in `transcribe.py`. Add the key in both languages.
+- **Word timings are sacred.** Editing, hiding or splitting never shifts neighbouring words. Every new domain operation needs a test in `tests/`.
+- **Export:** the original's timestamps are preserved; the only documented exception is the `video_filter` shift for originals without an edit list. Changes to `export-args.json` go through `npm run check:export` and `check-export-variants.mjs`.
+- **Nothing blocks the UI:** native work goes through `jobs::Ticket` with progress and cancellation, one job at a time.
+- **Persistence:** temporary write + rename, validated backup. Never write user files without going through a dialog.
+- **Style:** default Prettier, strict TypeScript, no `any`, no comments that repeat the code; comment the why. Rust with `cargo fmt` and clean clippy. Everything in English except the translated interface texts.
+- **Commits:** only when asked. Imperative mood, one-line summary.

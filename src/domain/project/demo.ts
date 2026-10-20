@@ -3,8 +3,8 @@ import type { Project } from "./types";
 
 /** Text and name of the demo project shown before importing a video. */
 export const DEMO_TEXT =
-  "Las buenas ideas merecen ser escuchadas. Haz que cada palabra cuente. Menos tiempo editando. Más tiempo creando.";
-export const DEMO_NAME = "Un poco de inspiración";
+  "Great ideas deserve to be heard. Make every word count. Less time editing. More time creating.";
+export const DEMO_NAME = "A little inspiration";
 const DEMO_FIRST_WORD = 0.7;
 const DEMO_WORD_STEP = 0.6;
 const DEMO_WORD_LENGTH = 0.53;

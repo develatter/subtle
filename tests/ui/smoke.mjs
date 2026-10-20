@@ -111,17 +111,20 @@ try {
   });
   await page.keyboard.type("XYZ");
   await blur();
-  check((await first.innerText()) === "LasXYZ", "word edit committed on blur");
+  check(
+    (await first.innerText()) === "GreatXYZ",
+    "word edit committed on blur",
+  );
   check(
     (await page.evaluate(
       () =>
         JSON.parse(localStorage.getItem("subtle-project")).blocks[0].words[0]
           .text,
-    )) === "LasXYZ",
+    )) === "GreatXYZ",
     "autosave to localStorage",
   );
   await page.keyboard.press("Meta+z");
-  check((await first.innerText()) === "Las", "undo restores word");
+  check((await first.innerText()) === "Great", "undo restores word");
 
   const third = page
     .locator(".text-block")

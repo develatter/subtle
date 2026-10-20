@@ -9,7 +9,7 @@ import subprocess
 import sys
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
-if sys.platform != 'darwin': raise SystemExit('Usa este script en macOS; Linux necesita su compilación y validación propias.')
+if sys.platform != 'darwin': raise SystemExit('Run this script on macOS; Linux needs its own build and validation.')
 python = ROOT / '.venv/bin/python'
 build = ROOT / '.build-runtime'
 build.mkdir(exist_ok=True)
@@ -31,4 +31,4 @@ subprocess.run([str(runtime / 'subtle-speech/subtle-speech'), '--check'], check=
 subprocess.run([str(python), str(Path(__file__).with_name('runtime-licenses.py')), str(runtime)], check=True)
 manifest = {'platform': sys.platform, 'model_sha256': hashlib.file_digest(model.open('rb'), 'sha256').hexdigest(), 'speech_source_sha256': hashlib.sha256((ROOT / 'scripts/transcribe.py').read_bytes()).hexdigest()}
 (runtime / 'build-manifest.json').write_text(json.dumps(manifest, indent=2))
-print('Runtime preparado. La firma/notarización y la prueba en un Mac limpio son pasos de distribución separados.')
+print('Runtime ready. Signing, notarization and testing on a clean Mac are separate distribution steps.')

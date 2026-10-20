@@ -9,7 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / 'src-tauri/runtime/media'
 if sys.platform != 'darwin':
-    raise SystemExit('Este empaquetador de bibliotecas es para macOS; Linux requiere su propio paquete.')
+    raise SystemExit('This library bundler is for macOS; Linux needs its own package.')
 DEST.mkdir(parents=True, exist_ok=True)
 (DEST / 'bin').mkdir(exist_ok=True)
 (DEST / 'lib').mkdir(exist_ok=True)
@@ -21,7 +21,7 @@ def collect(path, binary=False):
     source = Path(path).resolve()
     if source in seen: return seen[source]
     target = DEST / ('bin' if binary else 'lib') / source.name
-    if target in seen.values(): raise RuntimeError(f'Colisión de bibliotecas: {target}')
+    if target in seen.values(): raise RuntimeError(f'Library name collision: {target}')
     seen[source] = target
     shutil.copy2(source, target)
     target.chmod(0o755)

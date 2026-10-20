@@ -1,121 +1,138 @@
+<div align="center">
+
 # Subtle
 
-Editor local de subtítulos para shorts, con Tauri 2, React, TypeScript y Rust.
+**A local-first subtitle editor for vertical video.**
 
-## Desarrollo
+Transcribe, edit and style captions for shorts, reels and stories, then burn them into the original video without it ever leaving your computer.
 
-Requisitos: Node 22+, Rust estable, FFmpeg con libass y ffprobe. En Linux también hacen falta los [prerrequisitos de Tauri](https://v2.tauri.app/start/prerequisites/) (WebKitGTK 4.1, GTK, etc.).
+[![Checks](https://github.com/develatter/subtle/actions/workflows/check.yml/badge.svg)](https://github.com/develatter/subtle/actions/workflows/check.yml)
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-8b5cf6.svg)](LICENSE)
+![Tauri 2](https://img.shields.io/badge/Tauri-2-24c8db?logo=tauri&logoColor=white)
+![React 19](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-stable-dea584?logo=rust&logoColor=white)
+
+![Subtle editor](docs/screenshots/editor.png)
+
+</div>
+
+## Features
+
+- **Automatic transcription, fully offline.** Whisper (via [stable-ts](https://github.com/jianfch/stable-ts)) runs locally with language detection and word-level timestamps. Audio never leaves your machine.
+- **Word-level editing that respects timing.** Every word keeps its own start and end. Fixing a typo, hiding a word or splitting a block never shifts its neighbours.
+- **Text-editor ergonomics.** <kbd>Enter</kbd> splits a block, <kbd>Backspace</kbd> at the start merges it with the previous one, <kbd>Shift</kbd>+<kbd>Enter</kbd> adds a line break, and undo/redo keeps the last 100 operations.
+- **Timeline.** Drag blocks, zoom with <kbd>Ctrl</kbd> + wheel and resize the panel. Changing a block's edges scales its inner word timings proportionally.
+- **Styling and animation.** Pick the font, size, colour, outline, shadow and position, then choose an animation: normal, progressive reveal or word by word. Styles apply globally or per block.
+- **Accurate preview.** The preview is rendered with [libass](https://github.com/libass/libass), the same engine used for the final export (native in the app, WASM in the browser).
+- **Lossless-minded export.** The original is re-encoded to H.264 with its presentation timestamps, audio and colour metadata preserved. Subtitles can also be exported as SRT, ASS or EBU STL.
+- **Safe persistence.** Sessions are saved with atomic writes and a validated backup. If a video is moved, it can be relinked without losing the subtitles.
+- **English and Spanish** UI, native messages and speech worker.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/preview.png" alt="Expanded preview"></td>
+    <td width="50%"><img src="docs/screenshots/export.png" alt="Export dialog"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Full-screen preview rendered with libass</sub></td>
+    <td align="center"><sub>Export to MP4, SRT, ASS or EBU STL</sub></td>
+  </tr>
+</table>
+
+## Getting started
+
+### Requirements
+
+- Node 22+
+- Stable Rust
+- FFmpeg built with libass, plus ffprobe
+- Python 3 for the transcription worker
+- On Linux, the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) (WebKitGTK 4.1, GTK, …)
+
+### Run the desktop app
 
 ```sh
 npm install
-npm run desktop
-```
-
-`npm run dev` abre únicamente la interfaz web en http://127.0.0.1:1420. Permite probar el editor con la demo o un vídeo compatible, pero los comandos nativos requieren Tauri.
-
-```sh
-npm run build
-npm test
-npm run test:ui          # prueba de humo de la interfaz (requiere `npx playwright install chromium`)
-cargo check --manifest-path src-tauri/Cargo.toml
-node --import tsx scripts/check-export.mjs
-```
-
-Las reglas del repositorio (arquitectura, estilo, qué no romper) están en `AGENTS.md`.
-
-Para generar una app de desarrollo en Mac: `npm run desktop -- build --debug --bundles app`. Los paquetes Linux deben compilarse y probarse en Linux; no se han validado en este equipo.
-
-## Idiomas
-
-La interfaz está disponible en español e inglés. El idioma se elige en la barra superior, se guarda en el navegador (`subtle-locale`) y por defecto sigue el idioma del sistema. Los mensajes nativos (Rust) y los del motor de voz (Python, mediante `SUBTLE_LOCALE`) usan el mismo idioma. Para añadir un idioma: crear `src/i18n/messages/<código>.ts` con las mismas claves que `es.ts`, registrarlo en `src/i18n/locale.ts` y `translate.ts`, y añadir la variante en `src-tauri/src/i18n.rs` y en `scripts/transcribe.py`.
-
-## Arquitectura
-
-El frontend sigue una separación por capas; las dependencias solo apuntan hacia dentro (UI → aplicación → dominio):
-
-| Capa            | Ruta                      | Contenido                                                                                                                                                                                                             |
-| --------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Dominio         | `src/domain/`             | Modelo del proyecto, operaciones de edición (dividir, unir, mover, retemporizar), validación, segmentación y exportadores SRT/ASS/STL. Sin React ni Tauri; los errores son códigos (`DomainError`) que la UI traduce. |
-| Aplicación      | `src/application/`        | Casos de uso (carga de vídeo, transcripción, exportación, edición) y los puertos (`ports.ts`) que necesitan del entorno.                                                                                              |
-| Infraestructura | `src/infrastructure/`     | Implementaciones de los puertos: comandos Tauri (`tauri/commands.ts` es el único sitio que conoce sus nombres) y alternativas de navegador.                                                                           |
-| Estado          | `src/state/`              | Store del proyecto con historial y persistencia (navegador + sesión nativa) y store de la interfaz.                                                                                                                   |
-| Interfaz        | `src/ui/`                 | Componentes por panel (transcripción, preview, inspector, línea de tiempo, diálogos), hooks de ciclo de vida y estilos por área.                                                                                      |
-| i18n            | `src/i18n/`               | Diccionarios y traductor tipado.                                                                                                                                                                                      |
-| Configuración   | `src/config/constants.ts` | Límites, claves de almacenamiento, rutas de assets y otros valores antes dispersos.                                                                                                                                   |
-
-El backend Rust (`src-tauri/src/`) está dividido por capacidad: `media`, `preview`, `export`, `speech`, `fonts`, `documents`, `persistence`, `jobs`, `process` (binarios y ejecución) e `i18n` (mensajes y comando `set_locale`).
-
-## Modelo de edición
-
-Cada palabra conserva su identidad, inicio, fin y visibilidad. Los bloques son agrupaciones de palabras. Omitir no elimina ni desplaza tiempos. Enter divide en un límite de palabra; retroceso al inicio une con el bloque anterior. Suprimir al final une con el siguiente; Shift+Enter añade un salto visual. Una división dentro de una palabra se ajusta al límite de esa palabra: no se inventa su sincronización interna.
-
-La casilla «Solo este bloque» crea un estilo completo independiente. Al dividir se copia; al unir prevalece el primero. La ocultación de un bloque se convierte en ocultación de palabras al unirlo para no revelar texto accidentalmente. Mover un bloque en la línea de tiempo conserva sus intervalos internos y se limita por los vecinos. Cambiar sus extremos en el inspector escala proporcionalmente sus tiempos internos.
-
-En escritorio, el proyecto se guarda en el directorio de datos de Subtle como `session.json`, mediante escritura temporal, sincronización a disco y sustitución atómica. `session.backup.json` conserva la revisión válida anterior. Al arrancar se valida el guardado y, si falla, se intenta recuperar la copia; el almacenamiento del navegador sirve como migración de versiones anteriores. Los fallos de guardado se muestran al usuario. El cierre de ventana espera al guardado pendiente y pide terminar o cancelar un trabajo en curso.
-
-El JSON de proyecto incluye la ruta del original. Al reiniciar o abrir un proyecto se vuelve a cargar el vídeo; si se ha movido, «Localizar vídeo original» permite enlazarlo conservando los subtítulos. El historial de deshacer sigue siendo de sesión (100 operaciones). Guardar una copia manual exporta el JSON y no sobrescribe archivos existentes.
-
-## Transcripción y alineación
-
-El comando nativo ejecuta `scripts/transcribe.py`: Whisper small mediante stable-ts, transcripción con detección de idioma y alineación de guion en español. Se necesita preparar el motor durante el desarrollo:
-
-```sh
 python3 -m venv .venv
 .venv/bin/pip install -r scripts/requirements.txt
 npm run desktop
 ```
 
-El lanzador y la aplicación de desarrollo de Mac detectan `.venv/bin/python` dentro de este proyecto. El modelo small ya está descargado en `.models/` en este equipo. No es necesario reinstalarlo para probar la app aquí. También puede configurarse `SUBTLE_PYTHON` con una ruta absoluta. La primera ejecución descarga el modelo; el audio y el guion se procesan localmente. El motor se ha probado con un vídeo real de 63 segundos. Los intervalos de duración cero o solapados se redistribuyen localmente entre las palabras afectadas y se marcan como aproximados para revisión; no se eliminan palabras. El inspector permite ajustar los tiempos de cada palabra o marcarlos como revisados. No incluye detección fiable de discrepancias entre guion y voz: los nombres propios deben contrastarse con el guion.
+The launcher picks up `.venv/bin/python` automatically. To use another interpreter, set `SUBTLE_PYTHON` to its absolute path. The first transcription downloads the Whisper `small` model into `.models/`.
 
-## Exportación
+### Web-only mode
 
-- SRT: texto y tiempos por bloque.
-- ASS: estilos, posición y tres modos (normal, progresivo y palabra a palabra).
-- EBU STL (Tech 3264): subtítulos abiertos en español, Latin ISO 6937, base de tiempo seleccionable 25/30 fps. Dos líneas de hasta 42 caracteres; rechaza caracteres no implementados y bloques demasiado largos. No incluye animaciones ni estilos avanzados. No altera el vídeo; los tiempos del archivo se cuantizan a la base elegida. Pendiente comprobar interoperabilidad con aplicaciones de broadcast.
-- MP4: recodifica **el original**, H.264 CRF 14 preset slow, conserva timestamps de presentación mediante `fps_mode passthrough` y `enc_time_base demux`, copia audio y metadatos de color disponibles. Es una política inicial de alta calidad, no una garantía universal de equivalencia perceptual.
+```sh
+npm run dev   # http://127.0.0.1:1420
+```
 
-Si el original no tiene lista de edición y su primer fotograma lleva un desplazamiento de composición positivo (grabaciones de Android/WhatsApp), los reproductores de Apple lo muestran desde 0 mientras FFmpeg escribiría un tramo vacío: fotograma negro inicial y vídeo retrasado respecto al audio. En ese caso el vídeo se desplaza para presentar el primer fotograma en 0, conservando los intervalos entre fotogramas y el audio intacto (`video_filter` en `src-tauri/src/process.rs`). Los originales con lista de edición se exportan con sus tiempos exactos.
+This runs the editor in the browser with a demo project and supports SRT/ASS/STL export. Transcription and video export need the native app.
 
-La exportación de vídeo inicial admite SDR de 8 bits `yuv420p`, sin metadatos de rotación. HDR, 10 bits y formatos distintos se rechazan explícitamente. Un audio incompatible con MP4 provoca error; nunca se recodifica silenciosamente. Se publica la salida una vez completada y no se sobrescriben archivos existentes. Las rutas se pasan como argumentos, sin shell.
+## Development
 
-La prueba de exportación genera un vídeo sintético y compara resolución, formatos, etiquetas de color, timestamps de cada fotograma y hash del audio comprimido. No sustituye pruebas visuales con material real ni validación HDR/VFR amplia.
+| Command                                             | What it does                               |
+| --------------------------------------------------- | ------------------------------------------ |
+| `npm test`                                          | Domain and persistence tests (`node:test`) |
+| `npm run test:ui`                                   | Playwright smoke test of the interface     |
+| `npm run build`                                     | Type-check and build the frontend          |
+| `npm run check:export`                              | Real export round-trip with FFmpeg         |
+| `npm run format`                                    | Prettier                                   |
+| `cargo test --manifest-path src-tauri/Cargo.toml`   | Rust tests                                 |
+| `cargo clippy --manifest-path src-tauri/Cargo.toml` | Lints (kept warning-free)                  |
+| `python3 scripts/check-speech.py`                   | Speech worker checks                       |
 
-## Pendiente antes de una versión distribuible
+Contribution rules (architecture, style, what must not break) are in [`AGENTS.md`](AGENTS.md).
 
-- Validar el paquete autónomo en un Mac limpio y preparar su equivalente Linux. Los trabajos tienen progreso y cancelación; el cierre de ventana espera a que terminen o se cancelen.
-- Ampliar las pruebas de equivalencia de render entre libass nativo y libass WASM. Ambos reciben el mismo ASS y la preview nativa carga las fuentes reales seleccionadas. El navegador usa una fuente libre de respaldo. La preview utiliza solo libass; ante un fallo lo indica sin sustituir la tipografía por un render CSS.
-- Automatizar la elección de proxy. El botón «Crear proxy + onda» ya genera H.264 ligero y una forma de onda real; la exportación sigue usando el original y sus dimensiones.
-- Recorrido de color HDR/10 bits, orientación y formatos de audio/contenedor adicionales, con fixtures representativos.
-- Revisión de desajustes guion/audio y experiencia de corrección de frases completas.
-- Validar Linux y distribuir instaladores firmados; incluir licencias de motores y fuentes que se distribuyan.
+### Architecture
 
-Fuentes técnicas: [Tauri](https://v2.tauri.app/), [FFmpeg](https://ffmpeg.org/ffmpeg.html), [stable-ts](https://github.com/jianfch/stable-ts), [libass](https://github.com/libass/libass), [EBU Tech 3264](https://tech.ebu.ch/docs/tech/tech3264.pdf).
+The frontend is layered, and dependencies only point inwards: **UI → application → domain**.
 
-## Prueba local del vídeo aportado
+| Layer          | Path                  | Responsibility                                                                                                              |
+| -------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Domain         | `src/domain/`         | Project model, editing operations, validation, segmentation and SRT/ASS/STL exporters. No React or Tauri; errors are codes. |
+| Application    | `src/application/`    | Use cases (media, transcription, export, editing) and the ports they need from the environment.                             |
+| Infrastructure | `src/infrastructure/` | Port implementations: Tauri commands and browser fallbacks.                                                                 |
+| State          | `src/state/`          | Zustand stores for the project (history and persistence) and the UI.                                                        |
+| UI             | `src/ui/`             | Components per panel, lifecycle hooks and styles per area.                                                                  |
+| i18n           | `src/i18n/`           | Typed dictionaries and translator.                                                                                          |
 
-Los archivos de prueba están en `.local-tests/`, excluidos de Git. El original no se ha modificado. La exportación mantiene los 1.893 fotogramas y sus timestamps, 1080×1920, 30 fps, base temporal 1/19200, yuv420p, BT.709 y rango TV. El hash de los paquetes de audio coincide. El SSIM de la parte superior (60%, sin subtítulos) es 0,995181. La transcripción automática contiene 216 palabras y 42 bloques, con cuatro intervalos marcados para revisar; no es una transcripción editorialmente corregida.
+The Rust backend (`src-tauri/src/`) has one module per capability: `media`, `preview`, `export`, `speech`, `fonts`, `documents`, `persistence`, `jobs`, `process` and `i18n`. Native work runs as cancellable jobs with progress, one at a time, so the UI never blocks.
 
-La app de desarrollo está en `src-tauri/target/debug/bundle/macos/Subtle.app`. La compilación autónoma de producción se genera por separado en `src-tauri/target/release/bundle/macos/Subtle.app`.
+## Export details
 
-## Paquete autónomo macOS
+| Format  | Notes                                                                                                                                                                      |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **MP4** | Re-encodes the original with H.264 (CRF 14, preset slow). Keeps presentation timestamps (`fps_mode passthrough`, `enc_time_base demux`), copies audio and colour metadata. |
+| **ASS** | Full styling, position and the three animation modes.                                                                                                                      |
+| **SRT** | Text and timing per block.                                                                                                                                                 |
+| **STL** | EBU Tech 3264, Latin ISO 6937, 25 or 30 fps time base, two lines of up to 42 characters. Rejects unsupported characters instead of altering them.                          |
+
+Some Android and WhatsApp recordings have no edit list, and their first frame carries a positive composition offset. Apple players show these from 0, but FFmpeg would write an empty lead-in, which causes a black first frame and audio drift. For these files only, the video is shifted so that the first frame lands on 0. Frame intervals and audio are left untouched. Originals with an edit list keep their exact timestamps.
+
+Video export currently supports 8-bit SDR `yuv420p` without rotation metadata. HDR, 10-bit and incompatible audio are rejected explicitly, never silently converted. Output is published only after completion, and existing files are never overwritten.
+
+## Packaging for macOS
 
 ```sh
 .venv/bin/pip install -r scripts/requirements-macos-arm64.lock.txt
 npm run release:mac
 ```
 
-El proceso empaqueta el worker con Python y sus módulos, FFmpeg/ffprobe con sus bibliotecas y el modelo small ya descargado. La app busca primero los recursos internos. No debe depender de Homebrew, de `.venv` ni de `.models` en ejecución. Se conserva el identificador para mantener los proyectos anteriores. La compilación local actual es **Apple Silicon, macOS 26 o superior**: ese mínimo procede de las bibliotecas instaladas que se han empaquetado. Ampliar la compatibilidad requiere compilar las dependencias contra una versión anterior, no basta con cambiar el número del instalador.
+This bundles the Python worker (PyInstaller), FFmpeg/ffprobe with their libraries and the Whisper `small` model into a self-contained `Subtle.app`. The current build targets Apple Silicon on macOS 26 or later. When `APPLE_ID`, `APPLE_PASSWORD` and `APPLE_TEAM_ID` (or an App Store Connect API key) are set, Tauri signs and notarizes the app as part of the build.
 
-## Firma y notarización
+## Roadmap
 
-El proceso completo (certificado Developer ID, credenciales de notarización, variables de entorno y verificación en un Mac limpio) está en [`docs/firma-y-notarizacion.md`](docs/firma-y-notarizacion.md).
+- Validate the standalone bundle on a clean Mac and produce Linux packages.
+- Broader render-equivalence tests between native and WASM libass.
+- Automatic proxy selection for heavy originals.
+- HDR/10-bit, rotation and more audio/container formats.
+- Script-vs-audio mismatch detection to speed up proofreading.
+- Signed installers.
 
-## Licencias del paquete autónomo
+## License
 
-El FFmpeg empaquetado procede de Homebrew y está compilado con `--enable-gpl --enable-version3` (x264, x265, xvid) y sin `--enable-nonfree`, así que ese binario se distribuye bajo GPLv3. Subtle lo ejecuta como proceso independiente y no enlaza con él; aun así, al distribuir hay que incluir los textos de licencia (ya se copian en `runtime/media/licenses/`) y ofrecer el código fuente de FFmpeg y de las bibliotecas GPL correspondientes a las versiones exactas empaquetadas. Whisper y stable-ts son MIT; el modelo `small` se distribuye bajo la licencia de OpenAI Whisper (MIT). La tipografía de respaldo de la preview es Noto Sans (OFL). `runtime/python-licenses/packages.json` inventaría los paquetes Python; `torchaudio`, `Jinja2` y `pyinstaller-hooks-contrib` no declaran licencia en sus metadatos (BSD, BSD y Apache 2.0 respectivamente en sus repositorios).
+Subtle is free software: you can redistribute it and/or modify it under the terms of the [GNU General Public License](LICENSE), either version 3 of the License or (at your option) any later version.
 
-Subtle es software propietario (ver `LICENSE`); las licencias de terceros del paquete se incluyen con él. Se incluyen inventarios y archivos de licencia disponibles. Antes de distribución pública quedan la revisión de las obligaciones de redistribución y fuentes correspondientes, firma Developer ID y notarización. La firma ad hoc de bibliotecas permite pruebas locales, no acredita una distribución firmada por Apple. El flujo del worker sigue la [documentación de PyInstaller](https://www.pyinstaller.org/en/stable/usage.html).
+The standalone bundle ships third-party components under their own licenses. The bundled FFmpeg is built with `--enable-gpl --enable-version3` and runs as a separate process. Whisper, stable-ts and the `small` model are MIT, and Noto Sans is OFL. License texts are copied into `runtime/media/licenses/` and `runtime/python-licenses/` at build time.
 
-Verificación local: `npm test`, `cargo test --manifest-path src-tauri/Cargo.toml`, `npm run check:export` y `node --import tsx scripts/check-export-variants.mjs` (este último usa el FFmpeg empaquetado). Las variantes comprueban timestamps de vídeo/audio con FPS fraccional, VFR y audio retrasado. El informe de un original concreto puede generarse con `scripts/verify-video.py`.
-
-El desfase y el fotograma negro reportados se han reproducido en el archivo afectado (vídeo con inicio en 0,1667 s y sin lista de edición) y quedan corregidos con el desplazamiento descrito en «Exportación». Esto no acredita compatibilidad Linux ni interoperabilidad STL en herramientas externas.
+Built on [Tauri](https://v2.tauri.app/), [FFmpeg](https://ffmpeg.org/), [stable-ts](https://github.com/jianfch/stable-ts), [Whisper](https://github.com/openai/whisper) and [libass](https://github.com/libass/libass).

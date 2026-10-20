@@ -23,11 +23,11 @@ v2=next(s for s in b['streams'] if s['codec_type']=='video')
 fields=['width','height','pix_fmt','color_range','color_space','color_transfer','color_primaries','r_frame_rate','time_base']
 checks={key:{'source':v1.get(key),'output':v2.get(key),'match':v1.get(key)==v2.get(key)} for key in fields}
 f1,f2=frames(source),frames(output)
-assert f1==f2,'Los tiempos de los fotogramas cambiaron'
-assert all(c['match'] for c in checks.values()),'Cambió una propiedad del vídeo'
+assert f1==f2,'Frame timestamps changed'
+assert all(c['match'] for c in checks.values()),'A video property changed'
 audio_equal=audio(source)==audio(output)
-assert audio_equal,'El audio cambió'
-assert audio_packets(source)==audio_packets(output),'Los tiempos o el priming del audio cambiaron'
+assert audio_equal,'The audio changed'
+assert audio_packets(source)==audio_packets(output),'Audio timestamps or priming changed'
 # The app default caption center is y=74%; this comparison explicitly excludes that area.
 height=int(v1['height']*.60)//2*2
 ssim=subprocess.run(['ffmpeg','-v','info','-i',source,'-i',output,'-filter_complex',f'[0:v]crop=iw:{height}:0:0[a];[1:v]crop=iw:{height}:0:0[b];[a][b]ssim','-an','-f','null','-'],capture_output=True,text=True,check=True)

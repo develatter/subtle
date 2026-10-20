@@ -5,7 +5,7 @@ import { fromWords, type Project } from "../src/domain/index.ts";
 test("native recovery supersedes legacy storage and reports failed durable writes", async () => {
   const backup = fromWords(
     [{ word: "Recuperado", start: 0, end: 1 }],
-    "Copia válida",
+    "Valid backup",
   );
   backup.source = { path: "/tmp/original.mp4" };
   const saved: Project[] = [];
@@ -39,16 +39,16 @@ test("native recovery supersedes legacy storage and reports failed durable write
   const { useProjectStore: useProject, flushProject } =
     await import("../src/state/index.ts");
   await flushProject();
-  assert.equal(useProject.getState().project.name, "Copia válida");
+  assert.equal(useProject.getState().project.name, "Valid backup");
   assert.deepEqual(useProject.getState().project.source, backup.source);
   fail = true;
-  useProject.getState().commit({ ...backup, name: "Edición pendiente" });
+  useProject.getState().commit({ ...backup, name: "Pending edit" });
   await assert.rejects(flushProject(), /Disk full/);
   assert.match(useProject.getState().storageIssue?.detail ?? "", /Disk full/);
-  assert.equal(useProject.getState().project.name, "Edición pendiente");
+  assert.equal(useProject.getState().project.name, "Pending edit");
   fail = false;
-  useProject.getState().commit({ ...backup, name: "Edición guardada" });
+  useProject.getState().commit({ ...backup, name: "Saved edit" });
   await flushProject();
-  assert.equal(saved.at(-1)?.name, "Edición guardada");
+  assert.equal(saved.at(-1)?.name, "Saved edit");
   assert.equal(useProject.getState().storageIssue, null);
 });
