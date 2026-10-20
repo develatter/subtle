@@ -57,6 +57,7 @@ try {
   });
   const page = await browser.newPage({
     viewport: { width: 1440, height: 960 },
+    locale: "es-ES",
   });
   const errors = [];
   page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
@@ -75,7 +76,10 @@ try {
   const blur = () => page.evaluate(() => document.activeElement?.blur());
 
   check((await blocks()) === 4, "demo renders 4 blocks");
-  check((await text()).includes("Guardado local"), "Spanish UI by default");
+  check(
+    (await text()).includes("Guardado local"),
+    "UI follows the browser language",
+  );
   await page.waitForTimeout(1500);
   check(
     /libass · Demo/.test(
